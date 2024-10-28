@@ -57,6 +57,7 @@ int main(void)
         close(fd2[1]);
 
         printf("Now writing from parent\n");
+        
         // For passing messages (char array), strlen() is heavily recommended to use avoid the bugs.
         // For variables, sizeof() is recommended to use.
         write(fd1[1], "Hello, World!\n", strlen("Hello, World!\n"));
