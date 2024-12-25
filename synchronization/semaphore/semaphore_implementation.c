@@ -14,11 +14,9 @@ typedef struct
 
 void custom_wait(my_sem_t *sem)
 {
-    if (sem->val > 0) // If the lock is not acquired for an amount, acquire it
-    {
-        sem->val--;
-    }
-    else // Otherwise, wait until a lock is available
+    sem->val--;
+
+    if (sem->val < 0) // Wait until a lock is available
     {
         int count_cur_waiting = sizeof(sem->list) / sizeof(my_sem_t);
         pid_t calling_proc = getpid();
@@ -31,11 +29,8 @@ void custom_wait(my_sem_t *sem)
 
 void custom_signal(my_sem_t *sem)
 {
-    if (sem->val >= 0) // If there is no other process waiting, increase available lock count
-    {
-        sem->val++;
-    }
-    else // Otherwise, hand it to another process that demands it but sleeps... (Zzz)
+    sem->val++;
+    if (sem->val <= 0) // Hand it to another process that demands it but sleeps... (Zzz)
     {
         int count_cur_waiting = sizeof(sem->list) / sizeof(my_sem_t);
         pid_t waken_proc = sem->list[count_cur_waiting - 1];
